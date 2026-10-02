@@ -1,6 +1,8 @@
 /**
- * GIITS Institutional Attendance Portal Script with Animated Counter & Micro-Interactions
+ * GIITS Institutional Attendance Portal Script - Deduplicated Ultra-Smooth Ring Engine
  */
+
+let currentStudentKey = null;
 
 function calculatePercentage(present, total) {
   if (!total || total <= 0) return 0;
@@ -52,7 +54,7 @@ function getAttendanceTheme(percentage) {
 }
 
 // Smooth Animated Number Counter
-function animateNumber(elementId, targetNumber, suffix = "", duration = 1000) {
+function animateNumber(elementId, targetNumber, suffix = "", duration = 800) {
   const element = document.getElementById(elementId);
   if (!element || targetNumber === undefined || targetNumber === null) return;
 
@@ -62,7 +64,6 @@ function animateNumber(elementId, targetNumber, suffix = "", duration = 1000) {
   function updateCount(currentTime) {
     const elapsed = currentTime - startTime;
     const progress = Math.min(elapsed / duration, 1);
-    // Easing out cubic curve for fluid motion
     const easeProgress = 1 - Math.pow(1 - progress, 3);
     const currentCount = startNumber + (targetNumber - startNumber) * easeProgress;
 
@@ -83,6 +84,7 @@ function animateNumber(elementId, targetNumber, suffix = "", duration = 1000) {
 }
 
 function renderNotFoundState(rollNumber) {
+  currentStudentKey = null;
   const skeleton = document.getElementById("skeletonLoaderCard");
   const notFoundBox = document.getElementById("notFoundBox");
   const cardContent = document.getElementById("studentCardContent");
@@ -100,14 +102,22 @@ function renderNotFoundState(rollNumber) {
 }
 
 function renderStudentView(data, rollNumber) {
-  const skeleton = document.getElementById("skeletonLoaderCard");
-  const notFoundBox = document.getElementById("notFoundBox");
-  const cardContent = document.getElementById("studentCardContent");
-
   if (!data) {
     renderNotFoundState(rollNumber);
     return;
   }
+
+  // Deduplicate renders to prevent double-loading ring animation glitch
+  const dataKey = `${data.rollNumber}_${data.workingDays}_${data.presentDays}_${data.lastUpdated}_${JSON.stringify(data.monthlyHistory || {})}`;
+  if (dataKey === currentStudentKey) {
+    // Data has not changed; skip duplicate animation
+    return;
+  }
+  currentStudentKey = dataKey;
+
+  const skeleton = document.getElementById("skeletonLoaderCard");
+  const notFoundBox = document.getElementById("notFoundBox");
+  const cardContent = document.getElementById("studentCardContent");
 
   if (skeleton) skeleton.classList.add("hidden");
   if (notFoundBox) notFoundBox.classList.add("hidden");
@@ -124,8 +134,8 @@ function renderStudentView(data, rollNumber) {
   document.getElementById("lastUpdatedDisplay").textContent = data.lastUpdated || new Date().toLocaleDateString('en-GB');
 
   // Trigger smooth counter animation for metrics
-  animateNumber("workingDaysDisplay", data.workingDays !== undefined ? data.workingDays : 0, "", 900);
-  animateNumber("presentDaysDisplay", data.presentDays !== undefined ? data.presentDays : 0, "", 900);
+  animateNumber("workingDaysDisplay", data.workingDays !== undefined ? data.workingDays : 0, "", 800);
+  animateNumber("presentDaysDisplay", data.presentDays !== undefined ? data.presentDays : 0, "", 800);
 
   const avatar = document.getElementById("studentAvatarInitials");
   if (avatar) avatar.textContent = getInitials(data.studentName);
@@ -134,7 +144,6 @@ function renderStudentView(data, rollNumber) {
   const pctText = document.getElementById("percentageDisplay");
   pctText.style.color = theme.colorCode;
 
-  // Dynamic font sizing so 5-6 char percentages (e.g. 88.89%) fit inside ring cleanly
   if (pctStr.length > 5) {
     pctText.className = "text-2xl sm:text-3xl font-black tracking-tight transition-all duration-300";
   } else if (pctStr.length > 4) {
@@ -143,9 +152,10 @@ function renderStudentView(data, rollNumber) {
     pctText.className = "text-4xl sm:text-5xl font-black tracking-tight transition-all duration-300";
   }
 
-  // Trigger smooth number animation for percentage ring center
-  animateNumber("percentageDisplay", pct, "%", 1200);
+  // Smooth number counter animation
+  animateNumber("percentageDisplay", pct, "%", 900);
 
+  // Silky Smooth Circular Ring Animation
   const circle = document.getElementById("progressRing");
   if (circle) {
     const r = 50;
@@ -154,12 +164,12 @@ function renderStudentView(data, rollNumber) {
     const clamped = Math.min(Math.max(pct, 0), 100);
     const offset = c - (clamped / 100) * c;
     
-    // Trigger progress stroke animation
-    setTimeout(() => {
+    // Direct hardware-accelerated rAF stroke update
+    requestAnimationFrame(() => {
       circle.style.strokeDashoffset = offset;
       circle.style.stroke = theme.colorCode;
       circle.className = `progress-ring-circle ${theme.glowClass}`;
-    }, 50);
+    });
   }
 
   const statusBox = document.getElementById("statusBox");
@@ -224,7 +234,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-  // Ensure Skeleton Loader is active while initializing connection
   const skeleton = document.getElementById("skeletonLoaderCard");
   const notFoundBox = document.getElementById("notFoundBox");
   const cardContent = document.getElementById("studentCardContent");
