@@ -1,5 +1,5 @@
 /**
- * Universal Firebase Firestore Database Engine with Monthly Attendance Support
+ * Universal Firebase Firestore Database Engine (No Mock Data)
  * GONNA INSTITUTE OF INFORMATION TECHNOLOGY & SCIENCES
  * Department of Electronics and Communication Engineering
  */
@@ -34,59 +34,11 @@ function getDb() {
 
 const STUDENTS_COLLECTION = "students";
 
-// Initial Default Seed Data
-const DEFAULT_RECORDS = {
-  "23A81A04XX": {
-    studentName: "Pradeep Kumar",
-    rollNumber: "23A81A04XX",
-    workingDays: 120,
-    presentDays: 108,
-    lastUpdated: "02/10/2026",
-    latestMonth: "October 2026",
-    monthlyHistory: {
-      "October 2026": { workingDays: 24, presentDays: 22 },
-      "September 2026": { workingDays: 25, presentDays: 23 },
-      "August 2026": { workingDays: 24, presentDays: 21 },
-      "July 2026": { workingDays: 23, presentDays: 21 },
-      "June 2026": { workingDays: 24, presentDays: 21 }
-    }
-  },
-  "23A81A0412": {
-    studentName: "Anitha Sharma",
-    rollNumber: "23A81A0412",
-    workingDays: 120,
-    presentDays: 84,
-    lastUpdated: "02/10/2026",
-    latestMonth: "October 2026",
-    monthlyHistory: {
-      "October 2026": { workingDays: 24, presentDays: 16 },
-      "September 2026": { workingDays: 25, presentDays: 18 },
-      "August 2026": { workingDays: 24, presentDays: 17 },
-      "July 2026": { workingDays: 23, presentDays: 16 },
-      "June 2026": { workingDays: 24, presentDays: 17 }
-    }
-  },
-  "23A81A0455": {
-    studentName: "Rajesh Varma",
-    rollNumber: "23A81A0455",
-    workingDays: 120,
-    presentDays: 60,
-    lastUpdated: "02/10/2026",
-    latestMonth: "October 2026",
-    monthlyHistory: {
-      "October 2026": { workingDays: 24, presentDays: 12 },
-      "September 2026": { workingDays: 25, presentDays: 12 },
-      "August 2026": { workingDays: 24, presentDays: 12 },
-      "July 2026": { workingDays: 23, presentDays: 12 },
-      "June 2026": { workingDays: 24, presentDays: 12 }
-    }
-  }
-};
-
 window.AttendanceDB = {
-  // Fetch student record by Roll Number
+  // Fetch student record by Roll Number (Returns null if record does not exist in DB)
   getStudentByRoll: async function(rollNumber) {
-    const roll = (rollNumber || "23A81A04XX").toUpperCase();
+    if (!rollNumber) return null;
+    const roll = rollNumber.trim().toUpperCase();
     const db = getDb();
 
     if (db) {
@@ -99,31 +51,20 @@ window.AttendanceDB = {
           localStorage.setItem(`giits_roll_${roll}`, JSON.stringify(data));
           return data;
         } else {
-          // Seed initial default record if doc does not exist
-          const seedData = DEFAULT_RECORDS[roll] || {
-            studentName: "Student Name",
-            rollNumber: roll,
-            workingDays: 120,
-            presentDays: 108,
-            lastUpdated: new Date().toLocaleDateString('en-GB'),
-            latestMonth: "October 2026",
-            monthlyHistory: {
-              "October 2026": { workingDays: 24, presentDays: 22 }
-            }
-          };
-          await docRef.set(seedData);
-          localStorage.setItem(`giits_roll_${roll}`, JSON.stringify(seedData));
-          return seedData;
+          return null; // Record does not exist in Firestore
         }
       } catch (err) {
-        console.warn("Firestore fetch notice, using cached store:", err);
+        console.warn("Firestore fetch notice, trying cached local storage:", err);
       }
     }
 
     // Local Storage Fallback
     const cached = localStorage.getItem(`giits_roll_${roll}`);
-    if (cached) return JSON.parse(cached);
-    return DEFAULT_RECORDS[roll] || DEFAULT_RECORDS["23A81A04XX"];
+    if (cached) {
+      try { return JSON.parse(cached); } catch (e) {}
+    }
+
+    return null;
   },
 
   // Fetch all student records for Admin Portal
@@ -153,14 +94,12 @@ window.AttendanceDB = {
       try { return JSON.parse(stored); } catch (e) {}
     }
 
-    // Initialize Local Storage with default records
-    localStorage.setItem("giits_all_records", JSON.stringify(DEFAULT_RECORDS));
-    return DEFAULT_RECORDS;
+    return {};
   },
 
   // Save or update student record in Firestore & Local Storage
   saveStudent: async function(studentData) {
-    const roll = studentData.rollNumber.toUpperCase();
+    const roll = studentData.rollNumber.trim().toUpperCase();
     const existing = (await window.AttendanceDB.getAllStudents())[roll] || {};
 
     const payload = {
@@ -200,7 +139,7 @@ window.AttendanceDB = {
     const all = await window.AttendanceDB.getAllStudents();
 
     for (const r of recordsArray) {
-      const roll = r.rollNumber.toUpperCase();
+      const roll = r.rollNumber.trim().toUpperCase();
       const existing = all[roll] || {
         rollNumber: roll,
         studentName: r.studentName || "Student",
@@ -256,7 +195,7 @@ window.AttendanceDB = {
 
   // Delete student record from Firestore & Local Storage
   deleteStudent: async function(rollNumber) {
-    const roll = rollNumber.toUpperCase();
+    const roll = rollNumber.trim().toUpperCase();
     localStorage.removeItem(`giits_roll_${roll}`);
 
     const all = await window.AttendanceDB.getAllStudents();
@@ -277,7 +216,8 @@ window.AttendanceDB = {
 
   // Real-time Firestore Listener
   subscribeUpdates: function(rollNumber, callback) {
-    const roll = (rollNumber || "23A81A04XX").toUpperCase();
+    if (!rollNumber) return;
+    const roll = rollNumber.trim().toUpperCase();
     const db = getDb();
 
     if (db) {
@@ -287,6 +227,8 @@ window.AttendanceDB = {
             const data = doc.data();
             localStorage.setItem(`giits_roll_${roll}`, JSON.stringify(data));
             callback(data);
+          } else {
+            callback(null);
           }
         });
       } catch (e) {

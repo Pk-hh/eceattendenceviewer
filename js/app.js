@@ -1,5 +1,5 @@
 /**
- * GIITS Institutional Attendance Portal Script with Monthly Breakdown & Professional SVG Icons
+ * GIITS Institutional Attendance Portal Script with Zero Mock Data & Clean Error Handling
  */
 
 function calculatePercentage(present, total) {
@@ -51,16 +51,38 @@ function getAttendanceTheme(percentage) {
   }
 }
 
-function renderStudentView(data) {
-  if (!data) return;
+function renderNotFoundState(rollNumber) {
+  const notFoundBox = document.getElementById("notFoundBox");
+  const cardContent = document.getElementById("studentCardContent");
+
+  if (cardContent) cardContent.classList.add("hidden");
+  if (notFoundBox) {
+    notFoundBox.classList.remove("hidden");
+    const textEl = document.getElementById("notFoundRollText");
+    if (textEl) {
+      textEl.textContent = `No attendance record found for Roll Number "${rollNumber}" in database. Please check roll number or contact ECE Admin.`;
+    }
+  }
+}
+
+function renderStudentView(data, rollNumber) {
+  if (!data) {
+    renderNotFoundState(rollNumber);
+    return;
+  }
+
+  const notFoundBox = document.getElementById("notFoundBox");
+  const cardContent = document.getElementById("studentCardContent");
+  if (notFoundBox) notFoundBox.classList.add("hidden");
+  if (cardContent) cardContent.classList.remove("hidden");
 
   const pct = calculatePercentage(data.presentDays, data.workingDays);
   const theme = getAttendanceTheme(pct);
 
   document.getElementById("studentNameDisplay").textContent = data.studentName || "Student Name";
-  document.getElementById("rollNumberDisplay").textContent = data.rollNumber || "23A81A04XX";
-  document.getElementById("workingDaysDisplay").textContent = data.workingDays || 0;
-  document.getElementById("presentDaysDisplay").textContent = data.presentDays || 0;
+  document.getElementById("rollNumberDisplay").textContent = data.rollNumber || rollNumber || "N/A";
+  document.getElementById("workingDaysDisplay").textContent = data.workingDays !== undefined ? data.workingDays : 0;
+  document.getElementById("presentDaysDisplay").textContent = data.presentDays !== undefined ? data.presentDays : 0;
   document.getElementById("lastUpdatedDisplay").textContent = data.lastUpdated || new Date().toLocaleDateString('en-GB');
 
   const avatar = document.getElementById("studentAvatarInitials");
@@ -71,7 +93,7 @@ function renderStudentView(data) {
   pctText.textContent = pctStr;
   pctText.style.color = theme.colorCode;
 
-  // Dynamic font sizing to ensure 5-6 char percentages (e.g. 88.89%) fit inside ring without touch/overlap
+  // Dynamic font sizing so 5-6 char percentages (e.g. 88.89%) fit inside ring cleanly
   if (pctStr.length > 5) {
     pctText.className = "text-2xl sm:text-3xl font-black tracking-tight transition-all duration-300";
   } else if (pctStr.length > 4) {
@@ -110,13 +132,13 @@ function renderMonthlyBreakdown(history) {
   if (!container) return;
 
   if (!history || Object.keys(history).length === 0) {
-    container.innerHTML = `<p class="text-xs text-slate-400 text-center py-2">No monthly breakdown history available yet.</p>`;
+    container.innerHTML = "";
     return;
   }
 
   const entries = Object.entries(history);
   container.innerHTML = `
-    <div class="space-y-2">
+    <div class="space-y-2 mt-2">
       <div class="text-[10px] font-black text-slate-500 uppercase tracking-wider mb-2 flex items-center gap-1">
         <svg class="w-3.5 h-3.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
         MONTHLY BREAKDOWN HISTORY
@@ -147,14 +169,25 @@ function renderMonthlyBreakdown(history) {
 
 document.addEventListener("DOMContentLoaded", async () => {
   const urlParams = new URLSearchParams(window.location.search);
-  const rollParam = (urlParams.get("roll") || "23A81A04XX").toUpperCase();
+  const rollParam = (urlParams.get("roll") || "").trim().toUpperCase();
+
+  if (!rollParam) {
+    renderNotFoundState("N/A");
+    return;
+  }
+
+  // Set initial loading roll display
+  const rollDisp = document.getElementById("rollNumberDisplay");
+  if (rollDisp) rollDisp.textContent = rollParam;
 
   if (window.AttendanceDB) {
     const student = await window.AttendanceDB.getStudentByRoll(rollParam);
-    renderStudentView(student);
+    renderStudentView(student, rollParam);
 
     window.AttendanceDB.subscribeUpdates(rollParam, (updated) => {
-      renderStudentView(updated);
+      renderStudentView(updated, rollParam);
     });
+  } else {
+    renderNotFoundState(rollParam);
   }
 });

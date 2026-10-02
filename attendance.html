@@ -52,8 +52,25 @@
 
     </div>
 
-    <!-- 2. MAIN STUDENT ATTENDANCE RECORD CARD -->
-    <div class="portal-card p-6 space-y-5 my-4">
+    <!-- 2. RECORD NOT FOUND ERROR CARD (HIDDEN BY DEFAULT) -->
+    <div id="notFoundBox" class="portal-card p-8 text-center space-y-4 my-4 hidden">
+      <div class="w-14 h-14 mx-auto rounded-full bg-rose-50 border border-rose-200 flex items-center justify-center text-rose-600">
+        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+      </div>
+      <div class="space-y-1">
+        <h2 class="text-lg font-extrabold text-[#0b192e]">Student Record Not Found</h2>
+        <p id="notFoundRollText" class="text-xs text-slate-500">No attendance entry found in database.</p>
+      </div>
+      <div class="pt-2">
+        <a href="index.html" class="portal-btn-primary py-3 text-xs inline-flex items-center justify-center gap-2 max-w-xs mx-auto">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <span>Search Another Roll Number</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- 3. MAIN STUDENT ATTENDANCE RECORD CARD -->
+    <div id="studentCardContent" class="portal-card p-6 space-y-5 my-4">
       
       <!-- STUDENT PROFILE BANNER -->
       <div class="flex items-start justify-between pb-3.5 border-b border-slate-100">
@@ -63,7 +80,7 @@
             STUDENT NAME
           </span>
           <div id="studentNameDisplay" class="text-xl sm:text-2xl font-black text-[#0b192e] leading-tight">
-            Pradeep Kumar
+            Fetching Record...
           </div>
           <div class="pt-1">
             <span class="text-[10px] font-black text-slate-400 uppercase tracking-wider block flex items-center gap-1">
@@ -71,14 +88,14 @@
               ROLL NUMBER
             </span>
             <div id="rollNumberDisplay" class="text-xs font-mono font-extrabold text-slate-800 bg-slate-100 px-3 py-1 rounded-full border border-slate-200 inline-block mt-0.5">
-              23A81A04XX
+              SEARCHING...
             </div>
           </div>
         </div>
 
         <!-- Dynamic Initials Avatar -->
         <div id="studentAvatarInitials" class="w-12 h-12 rounded-2xl bg-[#0b192e] text-amber-400 flex items-center justify-center font-black text-base shadow-md">
-          PK
+          ...
         </div>
       </div>
 
@@ -89,22 +106,22 @@
             <circle cx="60" cy="60" r="50" fill="none" stroke="#e2e8f0" stroke-width="8" />
             <circle 
               id="progressRing"
-              class="progress-ring-circle ring-glow-emerald"
+              class="progress-ring-circle"
               cx="60" 
               cy="60" 
               r="50" 
               fill="none" 
-              stroke="#10b981" 
+              stroke="#cbd5e1" 
               stroke-width="8" 
               stroke-linecap="round"
               stroke-dasharray="314.159"
-              stroke-dashoffset="31.415"
+              stroke-dashoffset="314.159"
             />
           </svg>
           
           <div class="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
-            <span id="percentageDisplay" class="text-3xl sm:text-4xl font-black tracking-tight text-emerald-600 transition-all duration-300">
-              90%
+            <span id="percentageDisplay" class="text-3xl sm:text-4xl font-black tracking-tight text-slate-400 transition-all duration-300">
+              --%
             </span>
             <span class="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-1">
               ATTENDANCE
@@ -120,7 +137,7 @@
             <svg class="w-3.5 h-3.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
             WORKING DAYS
           </span>
-          <span id="workingDaysDisplay" class="block text-3xl font-black text-[#0b192e] mt-1">120</span>
+          <span id="workingDaysDisplay" class="block text-3xl font-black text-[#0b192e] mt-1">--</span>
         </div>
 
         <div class="stat-box-card p-4 text-center">
@@ -128,17 +145,19 @@
             <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
             DAYS PRESENT
           </span>
-          <span id="presentDaysDisplay" class="block text-3xl font-black text-[#0b192e] mt-1">108</span>
+          <span id="presentDaysDisplay" class="block text-3xl font-black text-[#0b192e] mt-1">--</span>
         </div>
       </div>
 
       <!-- ATTENDANCE STATUS BADGE -->
-      <div id="statusBox" class="p-4 rounded-2xl border flex items-start space-x-3.5 bg-emerald-50 border-emerald-200">
-        <div id="statusIcon" class="mt-0.5 flex-shrink-0"></div>
+      <div id="statusBox" class="p-4 rounded-2xl border flex items-start space-x-3.5 bg-slate-50 border-slate-200">
+        <div id="statusIcon" class="mt-0.5 flex-shrink-0">
+          <svg class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
         <div>
           <div class="text-[10px] font-black text-slate-500 uppercase tracking-wider">ATTENDANCE STATUS</div>
-          <div id="statusTitle" class="font-extrabold text-sm text-emerald-900">Attendance Satisfactory</div>
-          <div id="statusSubtitle" class="text-xs text-emerald-800 opacity-90 mt-0.5 font-medium">Eligible for End Examinations</div>
+          <div id="statusTitle" class="font-extrabold text-sm text-slate-700">Connecting to Database...</div>
+          <div id="statusSubtitle" class="text-xs text-slate-500 opacity-90 mt-0.5 font-medium">Fetching live attendance data</div>
         </div>
       </div>
 
@@ -153,7 +172,7 @@
           <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
           Last Updated:
         </span>
-        <span id="lastUpdatedDisplay" class="font-mono font-bold text-slate-700">02/10/2026</span>
+        <span id="lastUpdatedDisplay" class="font-mono font-bold text-slate-700">Checking...</span>
       </div>
 
       <!-- ACTION BUTTONS -->
@@ -166,7 +185,7 @@
 
     </div>
 
-    <!-- 3. OFFICIAL FOOTER -->
+    <!-- 4. OFFICIAL FOOTER -->
     <footer class="text-center py-4 px-3 text-[11px] text-slate-500 space-y-1 border-t border-slate-200/80">
       <p class="font-bold text-[#0b192e]">
         © 2026 GONNA INSTITUTE OF INFORMATION TECHNOLOGY &amp; SCIENCES
