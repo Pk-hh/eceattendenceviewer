@@ -1,5 +1,5 @@
 /**
- * GIITS Institutional Attendance Portal Script with Zero Mock Data & Clean Error Handling
+ * GIITS Institutional Attendance Portal Script with Animated Skeleton Loader
  */
 
 function calculatePercentage(present, total) {
@@ -52,9 +52,11 @@ function getAttendanceTheme(percentage) {
 }
 
 function renderNotFoundState(rollNumber) {
+  const skeleton = document.getElementById("skeletonLoaderCard");
   const notFoundBox = document.getElementById("notFoundBox");
   const cardContent = document.getElementById("studentCardContent");
 
+  if (skeleton) skeleton.classList.add("hidden");
   if (cardContent) cardContent.classList.add("hidden");
   if (notFoundBox) {
     notFoundBox.classList.remove("hidden");
@@ -66,13 +68,16 @@ function renderNotFoundState(rollNumber) {
 }
 
 function renderStudentView(data, rollNumber) {
+  const skeleton = document.getElementById("skeletonLoaderCard");
+  const notFoundBox = document.getElementById("notFoundBox");
+  const cardContent = document.getElementById("studentCardContent");
+
   if (!data) {
     renderNotFoundState(rollNumber);
     return;
   }
 
-  const notFoundBox = document.getElementById("notFoundBox");
-  const cardContent = document.getElementById("studentCardContent");
+  if (skeleton) skeleton.classList.add("hidden");
   if (notFoundBox) notFoundBox.classList.add("hidden");
   if (cardContent) cardContent.classList.remove("hidden");
 
@@ -175,10 +180,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     renderNotFoundState("N/A");
     return;
   }
-
-  // Set initial loading roll display
-  const rollDisp = document.getElementById("rollNumberDisplay");
-  if (rollDisp) rollDisp.textContent = rollParam;
 
   if (window.AttendanceDB) {
     const student = await window.AttendanceDB.getStudentByRoll(rollParam);
