@@ -1,5 +1,5 @@
 /**
- * GIITS Institutional Attendance Portal Script - Single Render Stream Engine
+ * GIITS Institutional Attendance Portal Script - Smooth Direct Card & Counter Engine
  */
 
 let currentStudentKey = null;
@@ -54,7 +54,7 @@ function getAttendanceTheme(percentage) {
 }
 
 // Smooth Animated Number Counter
-function animateNumber(elementId, targetNumber, suffix = "", duration = 800) {
+function animateNumber(elementId, targetNumber, suffix = "", duration = 900) {
   const element = document.getElementById(elementId);
   if (!element || targetNumber === undefined || targetNumber === null) return;
 
@@ -85,11 +85,9 @@ function animateNumber(elementId, targetNumber, suffix = "", duration = 800) {
 
 function renderNotFoundState(rollNumber) {
   currentStudentKey = null;
-  const skeleton = document.getElementById("skeletonLoaderCard");
   const notFoundBox = document.getElementById("notFoundBox");
   const cardContent = document.getElementById("studentCardContent");
 
-  if (skeleton) skeleton.classList.add("hidden");
   if (cardContent) cardContent.classList.add("hidden");
   if (notFoundBox && notFoundBox.classList.contains("hidden")) {
     notFoundBox.classList.remove("hidden");
@@ -114,19 +112,12 @@ function renderStudentView(data, rollNumber) {
   }
   currentStudentKey = dataKey;
 
-  const skeleton = document.getElementById("skeletonLoaderCard");
   const notFoundBox = document.getElementById("notFoundBox");
   const cardContent = document.getElementById("studentCardContent");
 
-  if (skeleton) skeleton.classList.add("hidden");
   if (notFoundBox) notFoundBox.classList.add("hidden");
-
-  // Only trigger entrance animation ONCE when transitioning from hidden
-  if (cardContent) {
-    if (cardContent.classList.contains("hidden")) {
-      cardContent.classList.remove("hidden");
-      cardContent.classList.add("animate-fade-up");
-    }
+  if (cardContent && cardContent.classList.contains("hidden")) {
+    cardContent.classList.remove("hidden");
   }
 
   const pct = calculatePercentage(data.presentDays, data.workingDays);
@@ -137,8 +128,8 @@ function renderStudentView(data, rollNumber) {
   document.getElementById("lastUpdatedDisplay").textContent = data.lastUpdated || new Date().toLocaleDateString('en-GB');
 
   // Trigger smooth counter animation for metrics
-  animateNumber("workingDaysDisplay", data.workingDays !== undefined ? data.workingDays : 0, "", 800);
-  animateNumber("presentDaysDisplay", data.presentDays !== undefined ? data.presentDays : 0, "", 800);
+  animateNumber("workingDaysDisplay", data.workingDays !== undefined ? data.workingDays : 0, "", 900);
+  animateNumber("presentDaysDisplay", data.presentDays !== undefined ? data.presentDays : 0, "", 900);
 
   const avatar = document.getElementById("studentAvatarInitials");
   if (avatar) avatar.textContent = getInitials(data.studentName);
@@ -156,9 +147,9 @@ function renderStudentView(data, rollNumber) {
   }
 
   // Smooth number counter animation
-  animateNumber("percentageDisplay", pct, "%", 900);
+  animateNumber("percentageDisplay", pct, "%", 1000);
 
-  // Silky Smooth Circular Ring Animation
+  // Silky Smooth Circular Ring Stroke Draw Animation
   const circle = document.getElementById("progressRing");
   if (circle) {
     const r = 50;
@@ -167,7 +158,7 @@ function renderStudentView(data, rollNumber) {
     const clamped = Math.min(Math.max(pct, 0), 100);
     const offset = c - (clamped / 100) * c;
     
-    // Direct hardware-accelerated rAF stroke update
+    // Direct hardware-accelerated stroke draw update
     requestAnimationFrame(() => {
       circle.style.strokeDashoffset = offset;
       circle.style.stroke = theme.colorCode;
@@ -201,7 +192,7 @@ function renderMonthlyBreakdown(history) {
   container.innerHTML = `
     <div class="space-y-2 mt-2">
       <div class="text-[10px] font-black text-slate-500 uppercase tracking-wider mb-2 flex items-center gap-1">
-        <svg class="w-3.5 h-3.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        <svg class="w-3.5 h-3.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 012-2v12a2 2 0 002 2z"/></svg>
         MONTHLY BREAKDOWN HISTORY
       </div>
       <div class="grid grid-cols-1 gap-2">
@@ -237,13 +228,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-  const skeleton = document.getElementById("skeletonLoaderCard");
-  const notFoundBox = document.getElementById("notFoundBox");
-  const cardContent = document.getElementById("studentCardContent");
-
-  if (skeleton) skeleton.classList.remove("hidden");
-  if (notFoundBox) notFoundBox.classList.add("hidden");
-  if (cardContent) cardContent.classList.add("hidden");
+  // Pre-fill initial roll display for instant feedback
+  const rollDisp = document.getElementById("rollNumberDisplay");
+  if (rollDisp) rollDisp.textContent = rollParam;
 
   if (window.AttendanceDB) {
     // Single subscription stream handles initial load + live updates seamlessly
