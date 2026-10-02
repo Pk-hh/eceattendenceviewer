@@ -1,5 +1,5 @@
 /**
- * GIITS Institutional Attendance Portal Script with Robust Skeleton Loading Flow
+ * GIITS Institutional Attendance Portal Script with Animated Counter & Micro-Interactions
  */
 
 function calculatePercentage(present, total) {
@@ -51,6 +51,37 @@ function getAttendanceTheme(percentage) {
   }
 }
 
+// Smooth Animated Number Counter
+function animateNumber(elementId, targetNumber, suffix = "", duration = 1000) {
+  const element = document.getElementById(elementId);
+  if (!element || targetNumber === undefined || targetNumber === null) return;
+
+  const startNumber = 0;
+  const startTime = performance.now();
+
+  function updateCount(currentTime) {
+    const elapsed = currentTime - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    // Easing out cubic curve for fluid motion
+    const easeProgress = 1 - Math.pow(1 - progress, 3);
+    const currentCount = startNumber + (targetNumber - startNumber) * easeProgress;
+
+    if (Number.isInteger(targetNumber)) {
+      element.textContent = `${Math.round(currentCount)}${suffix}`;
+    } else {
+      element.textContent = `${currentCount.toFixed(2)}${suffix}`;
+    }
+
+    if (progress < 1) {
+      requestAnimationFrame(updateCount);
+    } else {
+      element.textContent = `${targetNumber}${suffix}`;
+    }
+  }
+
+  requestAnimationFrame(updateCount);
+}
+
 function renderNotFoundState(rollNumber) {
   const skeleton = document.getElementById("skeletonLoaderCard");
   const notFoundBox = document.getElementById("notFoundBox");
@@ -60,6 +91,7 @@ function renderNotFoundState(rollNumber) {
   if (cardContent) cardContent.classList.add("hidden");
   if (notFoundBox) {
     notFoundBox.classList.remove("hidden");
+    notFoundBox.classList.add("animate-fade-up");
     const textEl = document.getElementById("notFoundRollText");
     if (textEl) {
       textEl.textContent = `No attendance record found for Roll Number "${rollNumber}" in database. Please check roll number or contact ECE Admin.`;
@@ -79,23 +111,27 @@ function renderStudentView(data, rollNumber) {
 
   if (skeleton) skeleton.classList.add("hidden");
   if (notFoundBox) notFoundBox.classList.add("hidden");
-  if (cardContent) cardContent.classList.remove("hidden");
+  if (cardContent) {
+    cardContent.classList.remove("hidden");
+    cardContent.classList.add("animate-fade-up");
+  }
 
   const pct = calculatePercentage(data.presentDays, data.workingDays);
   const theme = getAttendanceTheme(pct);
 
   document.getElementById("studentNameDisplay").textContent = data.studentName || "Student Name";
   document.getElementById("rollNumberDisplay").textContent = data.rollNumber || rollNumber || "N/A";
-  document.getElementById("workingDaysDisplay").textContent = data.workingDays !== undefined ? data.workingDays : 0;
-  document.getElementById("presentDaysDisplay").textContent = data.presentDays !== undefined ? data.presentDays : 0;
   document.getElementById("lastUpdatedDisplay").textContent = data.lastUpdated || new Date().toLocaleDateString('en-GB');
+
+  // Trigger smooth counter animation for metrics
+  animateNumber("workingDaysDisplay", data.workingDays !== undefined ? data.workingDays : 0, "", 900);
+  animateNumber("presentDaysDisplay", data.presentDays !== undefined ? data.presentDays : 0, "", 900);
 
   const avatar = document.getElementById("studentAvatarInitials");
   if (avatar) avatar.textContent = getInitials(data.studentName);
 
   const pctStr = `${pct}%`;
   const pctText = document.getElementById("percentageDisplay");
-  pctText.textContent = pctStr;
   pctText.style.color = theme.colorCode;
 
   // Dynamic font sizing so 5-6 char percentages (e.g. 88.89%) fit inside ring cleanly
@@ -107,6 +143,9 @@ function renderStudentView(data, rollNumber) {
     pctText.className = "text-4xl sm:text-5xl font-black tracking-tight transition-all duration-300";
   }
 
+  // Trigger smooth number animation for percentage ring center
+  animateNumber("percentageDisplay", pct, "%", 1200);
+
   const circle = document.getElementById("progressRing");
   if (circle) {
     const r = 50;
@@ -114,9 +153,13 @@ function renderStudentView(data, rollNumber) {
     circle.style.strokeDasharray = `${c} ${c}`;
     const clamped = Math.min(Math.max(pct, 0), 100);
     const offset = c - (clamped / 100) * c;
-    circle.style.strokeDashoffset = offset;
-    circle.style.stroke = theme.colorCode;
-    circle.className = `progress-ring-circle ${theme.glowClass}`;
+    
+    // Trigger progress stroke animation
+    setTimeout(() => {
+      circle.style.strokeDashoffset = offset;
+      circle.style.stroke = theme.colorCode;
+      circle.className = `progress-ring-circle ${theme.glowClass}`;
+    }, 50);
   }
 
   const statusBox = document.getElementById("statusBox");
@@ -156,7 +199,7 @@ function renderMonthlyBreakdown(history) {
           else if (mPct < 75) mBadge = "bg-amber-100 text-amber-800";
 
           return `
-            <div class="p-3 bg-slate-50 rounded-xl border border-slate-200/80 flex items-center justify-between">
+            <div class="p-3 bg-slate-50 rounded-xl border border-slate-200/80 flex items-center justify-between hover:bg-slate-100/80 transition">
               <div>
                 <span class="font-extrabold text-xs text-[#0b192e] block">${month}</span>
                 <span class="text-[11px] text-slate-500 font-medium">Working: ${stats.workingDays}d | Present: ${stats.presentDays}d</span>
