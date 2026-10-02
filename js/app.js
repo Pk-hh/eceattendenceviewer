@@ -179,6 +179,33 @@ function renderStudentView(data, rollNumber) {
   renderMonthlyBreakdown(data.monthlyHistory);
 }
 
+function parseMonthDate(monthStr) {
+  if (!monthStr) return 0;
+  const timestamp = Date.parse(monthStr);
+  if (!isNaN(timestamp)) return timestamp;
+
+  const monthMap = {
+    jan: 0, january: 0, feb: 1, february: 1, mar: 2, march: 2,
+    apr: 3, april: 3, may: 4, jun: 5, june: 5, jul: 6, july: 6,
+    aug: 7, august: 7, sep: 8, sept: 8, september: 8, oct: 9, october: 9,
+    nov: 10, november: 10, dec: 11, december: 11
+  };
+
+  const str = String(monthStr).trim().toLowerCase();
+  const yearMatch = str.match(/\d{4}/);
+  const year = yearMatch ? parseInt(yearMatch[0], 10) : new Date().getFullYear();
+
+  let monthIndex = 0;
+  for (const [name, index] of Object.entries(monthMap)) {
+    if (str.includes(name)) {
+      monthIndex = index;
+      break;
+    }
+  }
+
+  return new Date(year, monthIndex, 1).getTime();
+}
+
 function renderMonthlyBreakdown(history) {
   const container = document.getElementById("monthlyHistoryBox");
   if (!container) return;
@@ -188,7 +215,10 @@ function renderMonthlyBreakdown(history) {
     return;
   }
 
-  const entries = Object.entries(history);
+  // Sort monthly breakdown entries chronologically by month/year (e.g. July 2026 -> August 2026 -> September 2026)
+  const entries = Object.entries(history).sort((a, b) => {
+    return parseMonthDate(a[0]) - parseMonthDate(b[0]);
+  });
   container.innerHTML = `
     <div class="space-y-2 mt-2">
       <div class="text-[10px] font-black text-slate-500 uppercase tracking-wider mb-2 flex items-center gap-1">
