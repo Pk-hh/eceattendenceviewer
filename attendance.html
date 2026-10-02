@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Student Attendance Details | GIITS ECE</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Main Portal Wrapper Centered -->
+  <div class="portal-wrapper">
+
+    <!-- 1. INSTITUTIONAL HEADER CARD -->
+    <div class="portal-card p-6 text-center space-y-4">
+      
+      <!-- CENTER TOP DUAL LOGOS SIDE-BY-SIDE -->
+      <div class="flex items-center justify-center gap-4">
+        <div class="w-14 h-14 sm:w-16 sm:h-16 flex-shrink-0 flex items-center justify-center">
+          <img src="assets/college-logo.png" alt="GIITS College Emblem" class="w-full h-full object-contain">
+        </div>
+        <div class="w-14 h-14 sm:w-16 sm:h-16 flex-shrink-0 flex items-center justify-center">
+          <img src="assets/dept-logo.png" alt="ECE Department Emblem" class="w-full h-full object-contain">
+        </div>
+      </div>
+
+      <!-- COLLEGE TITLE & AFFILIATION -->
+      <div class="space-y-1">
+        <h1 class="font-extrabold text-base sm:text-lg text-[#0b192e] uppercase tracking-tight leading-snug">
+          GONNA INSTITUTE OF INFORMATION TECHNOLOGY &amp; SCIENCES
+        </h1>
+        <p class="text-xs font-semibold text-slate-600">
+          (Approved by AICTE, New Delhi, Affiliated to JNTU GURAJADA, VIZIANAGARAM)
+        </p>
+        <p class="text-[11px] text-slate-500 font-medium">
+          Gonnavanipalem, Parwada madalam, Anakapalli – 530 053
+        </p>
+      </div>
+
+      <!-- PORTAL BADGE PILL WITH PROFESSIONAL ICON -->
+      <div class="pt-3 border-t border-slate-200/80 flex justify-center">
+        <span class="inline-flex items-center gap-1.5 text-xs font-bold text-[#0b192e] bg-slate-100 px-3.5 py-1.5 rounded-full border border-slate-200">
+          <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0112 20.055a11.952 11.952 0 01-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/></svg>
+          Department of Electronics &amp; Communication Engineering
+        </span>
+      </div>
+
+    </div>
+
+    <!-- 2. MAIN STUDENT ATTENDANCE RECORD CARD -->
+    <div class="portal-card p-6 space-y-5 my-4">
+      
+      <!-- STUDENT PROFILE BANNER -->
+      <div class="flex items-start justify-between pb-3.5 border-b border-slate-100">
+        <div class="space-y-1">
+          <span class="text-[10px] font-black text-slate-400 uppercase tracking-wider block flex items-center gap-1">
+            <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+            STUDENT NAME
+          </span>
+          <div id="studentNameDisplay" class="text-xl sm:text-2xl font-black text-[#0b192e] leading-tight">
+            Pradeep Kumar
+          </div>
+          <div class="pt-1">
+            <span class="text-[10px] font-black text-slate-400 uppercase tracking-wider block flex items-center gap-1">
+              <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V4a2 2 0 012-2h2a2 2 0 012 2v2m-4 0h4"/></svg>
+              ROLL NUMBER
+            </span>
+            <div id="rollNumberDisplay" class="text-xs font-mono font-extrabold text-slate-800 bg-slate-100 px-3 py-1 rounded-full border border-slate-200 inline-block mt-0.5">
+              23A81A04XX
+            </div>
+          </div>
+        </div>
+
+        <!-- Dynamic Initials Avatar -->
+        <div id="studentAvatarInitials" class="w-12 h-12 rounded-2xl bg-[#0b192e] text-amber-400 flex items-center justify-center font-black text-base shadow-md">
+          PK
+        </div>
+      </div>
+
+      <!-- HERO CIRCULAR ATTENDANCE INDICATOR -->
+      <div class="py-3 flex flex-col items-center justify-center">
+        <div class="relative w-52 h-52 sm:w-56 sm:h-56 flex items-center justify-center">
+          <svg class="w-full h-full transform -rotate-90" viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="50" fill="none" stroke="#e2e8f0" stroke-width="8" />
+            <circle 
+              id="progressRing"
+              class="progress-ring-circle ring-glow-emerald"
+              cx="60" 
+              cy="60" 
+              r="50" 
+              fill="none" 
+              stroke="#10b981" 
+              stroke-width="8" 
+              stroke-linecap="round"
+              stroke-dasharray="314.159"
+              stroke-dashoffset="31.415"
+            />
+          </svg>
+          
+          <div class="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
+            <span id="percentageDisplay" class="text-3xl sm:text-4xl font-black tracking-tight text-emerald-600 transition-all duration-300">
+              90%
+            </span>
+            <span class="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-1">
+              ATTENDANCE
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2-COLUMN STATS GRID WITH PROFESSIONAL ICONS -->
+      <div class="grid grid-cols-2 gap-3 pt-1">
+        <div class="stat-box-card p-4 text-center">
+          <span class="block text-[10px] font-black text-slate-500 uppercase tracking-wider flex items-center justify-center gap-1">
+            <svg class="w-3.5 h-3.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            WORKING DAYS
+          </span>
+          <span id="workingDaysDisplay" class="block text-3xl font-black text-[#0b192e] mt-1">120</span>
+        </div>
+
+        <div class="stat-box-card p-4 text-center">
+          <span class="block text-[10px] font-black text-slate-500 uppercase tracking-wider flex items-center justify-center gap-1">
+            <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            DAYS PRESENT
+          </span>
+          <span id="presentDaysDisplay" class="block text-3xl font-black text-[#0b192e] mt-1">108</span>
+        </div>
+      </div>
+
+      <!-- ATTENDANCE STATUS BADGE -->
+      <div id="statusBox" class="p-4 rounded-2xl border flex items-start space-x-3.5 bg-emerald-50 border-emerald-200">
+        <div id="statusIcon" class="mt-0.5 flex-shrink-0"></div>
+        <div>
+          <div class="text-[10px] font-black text-slate-500 uppercase tracking-wider">ATTENDANCE STATUS</div>
+          <div id="statusTitle" class="font-extrabold text-sm text-emerald-900">Attendance Satisfactory</div>
+          <div id="statusSubtitle" class="text-xs text-emerald-800 opacity-90 mt-0.5 font-medium">Eligible for End Examinations</div>
+        </div>
+      </div>
+
+      <!-- MONTHLY HISTORY BREAKDOWN -->
+      <div id="monthlyHistoryBox" class="pt-2 border-t border-slate-100">
+        <!-- Dynamically Populated by JS -->
+      </div>
+
+      <!-- LAST UPDATED TIMESTAMP WITH CLOCK ICON -->
+      <div class="flex items-center justify-between text-xs text-slate-400 pt-2 border-t border-slate-100">
+        <span class="font-semibold text-slate-500 flex items-center gap-1">
+          <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          Last Updated:
+        </span>
+        <span id="lastUpdatedDisplay" class="font-mono font-bold text-slate-700">02/10/2026</span>
+      </div>
+
+      <!-- ACTION BUTTONS -->
+      <div class="pt-2 flex flex-col sm:flex-row gap-2 no-print">
+        <a href="index.html" class="portal-btn-primary py-3 text-sm text-center flex items-center justify-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <span>Search Another Student</span>
+        </a>
+      </div>
+
+    </div>
+
+    <!-- 3. OFFICIAL FOOTER -->
+    <footer class="text-center py-4 px-3 text-[11px] text-slate-500 space-y-1 border-t border-slate-200/80">
+      <p class="font-bold text-[#0b192e]">
+        © 2026 GONNA INSTITUTE OF INFORMATION TECHNOLOGY &amp; SCIENCES
+      </p>
+      <p class="text-[10px]">
+        Department of Electronics and Communication Engineering
+      </p>
+    </footer>
+
+  </div>
+
+  <!-- Firebase SDK Compat Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  
+  <!-- Universal Application Modules -->
+  <script src="js/firebase-config.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

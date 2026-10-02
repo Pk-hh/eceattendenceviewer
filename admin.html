@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>GIITS Attendance Management | ECE Department</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Main Portal Wrapper Centered -->
+  <div class="portal-wrapper max-w-4xl">
+
+    <!-- 1. INSTITUTIONAL HEADER CARD -->
+    <div class="portal-card p-6 text-center space-y-4">
+      
+      <!-- CENTER TOP DUAL LOGOS SIDE-BY-SIDE -->
+      <div class="flex items-center justify-center gap-4">
+        <div class="w-14 h-14 sm:w-16 sm:h-16 flex-shrink-0 flex items-center justify-center">
+          <img src="assets/college-logo.png" alt="GIITS College Emblem" class="w-full h-full object-contain">
+        </div>
+        <div class="w-14 h-14 sm:w-16 sm:h-16 flex-shrink-0 flex items-center justify-center">
+          <img src="assets/dept-logo.png" alt="ECE Department Emblem" class="w-full h-full object-contain">
+        </div>
+      </div>
+
+      <!-- COLLEGE TITLE & AFFILIATION -->
+      <div class="space-y-1">
+        <h1 class="font-extrabold text-base sm:text-lg text-[#0b192e] uppercase tracking-tight leading-snug">
+          GONNA INSTITUTE OF INFORMATION TECHNOLOGY &amp; SCIENCES
+        </h1>
+        <p class="text-xs font-semibold text-slate-600">
+          (Approved by AICTE, New Delhi, Affiliated to JNTU GURAJADA, VIZIANAGARAM)
+        </p>
+        <p class="text-[11px] text-slate-500 font-medium">
+          Gonnavanipalem, Parwada madalam, Anakapalli – 530 053
+        </p>
+      </div>
+
+      <!-- PORTAL BADGE PILL -->
+      <div class="pt-3 border-t border-slate-200/80 flex justify-center">
+        <span class="inline-flex items-center gap-1.5 text-xs font-bold text-[#0b192e] bg-slate-100 px-3.5 py-1.5 rounded-full border border-slate-200">
+          <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          ECE Department Monthly Attendance Roster Management
+        </span>
+      </div>
+
+    </div>
+
+    <!-- 2. MONTHLY ATTENDANCE BULK UPLOAD CARD -->
+    <div class="portal-card p-6 space-y-4 my-5 border-2 border-blue-100 bg-gradient-to-b from-white to-blue-50/30">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-200 pb-3.5">
+        <div>
+          <h2 class="font-extrabold text-base sm:text-lg text-[#0b192e] flex items-center gap-2">
+            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+            Upload Monthly Attendance Batch
+          </h2>
+          <p class="text-xs text-slate-500 font-medium">
+            Upload attendance records for the selected month via CSV file or copy-paste text.
+          </p>
+        </div>
+        
+        <button onclick="downloadSampleCSV()" class="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl border border-slate-300 transition flex items-center gap-1.5">
+          <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          Download Sample CSV Template
+        </button>
+      </div>
+
+      <!-- TEMPLATE HELPER & QUICK ACTION BANNER -->
+      <div class="p-4 rounded-2xl bg-slate-900 text-white space-y-3 shadow-inner">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-black uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
+            <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            OFFICIAL CSV / EXCEL ATTENDANCE TEMPLATE
+          </span>
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="loadSampleTemplateToTextarea()" class="px-2.5 py-1 text-[11px] font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-lg transition">
+              📋 Load Sample Data
+            </button>
+            <button type="button" onclick="downloadSampleCSV()" class="px-2.5 py-1 text-[11px] font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg border border-slate-700 transition">
+              📥 Download .CSV File
+            </button>
+          </div>
+        </div>
+
+        <div class="font-mono text-[11px] text-slate-300 bg-slate-950/80 p-3 rounded-xl border border-slate-800 space-y-1">
+          <div class="text-slate-500 font-bold">// Format: RollNumber, StudentName, PresentDays</div>
+          <div>RollNumber, StudentName, PresentDays</div>
+          <div class="text-emerald-400">23A81A04XX, Pradeep Kumar, 22</div>
+          <div class="text-emerald-400">23A81A0412, Anitha Sharma, 18</div>
+          <div class="text-emerald-400">23A81A0455, Rajesh Varma, 12</div>
+        </div>
+      </div>
+
+      <form id="monthlyUploadForm" class="space-y-4">
+        <!-- MONTH & WORKING DAYS SELECTOR GRID -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-black text-slate-600 uppercase tracking-wider mb-1.5">SELECT ACADEMIC MONTH</label>
+            <select id="selectUploadMonth" class="portal-input font-bold text-slate-800">
+              <option value="October 2026" selected>October 2026</option>
+              <option value="September 2026">September 2026</option>
+              <option value="August 2026">August 2026</option>
+              <option value="July 2026">July 2026</option>
+              <option value="June 2026">June 2026</option>
+              <option value="May 2026">May 2026</option>
+              <option value="April 2026">April 2026</option>
+              <option value="March 2026">March 2026</option>
+              <option value="February 2026">February 2026</option>
+              <option value="January 2026">January 2026</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-black text-slate-600 uppercase tracking-wider mb-1.5">MONTHLY WORKING DAYS</label>
+            <input type="number" id="inputMonthWorkingDays" class="portal-input font-bold" value="24" min="1" required>
+          </div>
+        </div>
+
+        <!-- UPLOAD SOURCE METHOD TABS -->
+        <div class="space-y-3">
+          <label class="block text-xs font-black text-slate-600 uppercase tracking-wider">MONTHLY DATA INPUT METHOD</label>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <!-- CSV FILE INPUT -->
+            <div class="p-4 rounded-2xl border border-slate-200 bg-white space-y-2">
+              <span class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+                Option A: Choose CSV/Excel File
+              </span>
+              <input type="file" id="csvFileInput" accept=".csv,.txt" class="block w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-extrabold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+            </div>
+
+            <!-- PASTE TEXT AREA SOURCE -->
+            <div class="p-4 rounded-2xl border border-slate-200 bg-white space-y-2">
+              <span class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                Option B: Paste Tabular CSV Data
+              </span>
+              <textarea id="csvTextArea" rows="3" class="portal-input text-xs font-mono" placeholder="RollNumber, StudentName, PresentDays&#10;23A81A04XX, Pradeep Kumar, 22&#10;23A81A0412, Anitha Sharma, 18"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="portal-btn-primary py-3 text-sm flex items-center justify-center gap-2">
+          <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <span>Process &amp; Upload Monthly Attendance Batch</span>
+        </button>
+      </form>
+    </div>
+
+    <!-- 3. DIRECT ATTENDANCE ROSTER DASHBOARD -->
+    <div class="portal-card p-5 space-y-4 my-5">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+        <div>
+          <h2 class="font-extrabold text-base sm:text-lg text-[#0b192e] flex items-center gap-2">
+            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            Overall Roster &amp; Monthly Cumulative Database
+          </h2>
+          <p class="text-xs text-slate-500 font-medium">
+            Live student records with cumulative working days and present days.
+          </p>
+        </div>
+        
+        <button onclick="openAddModal()" class="w-full sm:w-auto px-4 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs rounded-xl shadow transition flex items-center justify-center gap-1.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+          <span>Add Single Student Record</span>
+        </button>
+      </div>
+
+      <!-- TABLE CONTAINER -->
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-slate-50 border-b border-slate-200 text-[10px] font-black text-slate-500 uppercase tracking-wider">
+              <th class="py-3 px-3">Roll Number</th>
+              <th class="py-3 px-3">Student Name</th>
+              <th class="py-3 px-3 text-center">Latest Month</th>
+              <th class="py-3 px-3 text-center">Total Working</th>
+              <th class="py-3 px-3 text-center">Total Present</th>
+              <th class="py-3 px-3 text-center">Cumulative %</th>
+              <th class="py-3 px-3 text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="adminTableBody">
+            <!-- Dynamically Populated by JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 4. OFFICIAL INSTITUTIONAL FOOTER -->
+    <footer class="text-center py-4 px-3 text-[11px] text-slate-500 space-y-0.5 mt-6 border-t border-slate-200/80">
+      <p class="font-bold text-[#0b192e]">
+        © 2026 GONNA INSTITUTE OF INFORMATION TECHNOLOGY &amp; SCIENCES
+      </p>
+      <p class="text-[10px]">
+        Department of Electronics and Communication Engineering
+      </p>
+    </footer>
+
+  </div>
+
+  <!-- ADD / EDIT SINGLE STUDENT MODAL -->
+  <div id="adminModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+    <div class="portal-card max-w-md w-full p-6 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 id="modalTitle" class="font-extrabold text-[#0b192e] text-sm">Add New Student Record</h3>
+        <button onclick="toggleModal(false)" class="text-slate-400 hover:text-slate-600 font-bold p-1">✕</button>
+      </div>
+
+      <form id="adminForm" class="space-y-3.5">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Roll Number</label>
+          <input type="text" id="formRollNumber" class="portal-input uppercase" placeholder="e.g. 23A81A04XX" required>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Student Full Name</label>
+          <input type="text" id="formStudentName" class="portal-input" placeholder="e.g. Pradeep Kumar" required>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Working Days</label>
+            <input type="number" id="formWorkingDays" class="portal-input" value="120" min="1" required>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Days Present</label>
+            <input type="number" id="formPresentDays" class="portal-input" value="108" min="0" required>
+          </div>
+        </div>
+        <div class="pt-3 flex justify-end space-x-2 border-t border-slate-100">
+          <button type="button" onclick="toggleModal(false)" class="px-4 py-2 text-xs font-bold text-slate-600 bg-slate-100 rounded-xl">Cancel</button>
+          <button type="submit" class="px-4 py-2 text-xs font-extrabold bg-[#0b192e] text-white rounded-xl shadow">Save Record</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Firebase SDK Compat Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+  <!-- Universal Application Modules -->
+  <script src="js/firebase-config.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

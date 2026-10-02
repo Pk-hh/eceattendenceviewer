@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="100%" height="100%">
+  <defs>
+    <linearGradient id="giitsNavy" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a192f" />
+      <stop offset="50%" stop-color="#0f2942" />
+      <stop offset="100%" stop-color="#1e3a5f" />
+    </linearGradient>
+    <linearGradient id="giitsGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b" />
+      <stop offset="50%" stop-color="#d97706" />
+      <stop offset="100%" stop-color="#b45309" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#000000" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <!-- Outer Ring -->
+  <circle cx="120" cy="120" r="112" fill="none" stroke="url(#giitsNavy)" stroke-width="5" />
+  <circle cx="120" cy="120" r="105" fill="none" stroke="url(#giitsGold)" stroke-width="2" stroke-dasharray="6 3" />
+
+  <!-- Main Dark Blue Shield Base -->
+  <circle cx="120" cy="120" r="98" fill="url(#giitsNavy)" filter="url(#shadow)" />
+
+  <!-- Academic Crest Ring Text Path -->
+  <path id="circlePathTop" d="M 32 120 A 88 88 0 0 1 208 120" fill="none" />
+  <path id="circlePathBottom" d="M 208 120 A 88 88 0 0 1 32 120" fill="none" />
+
+  <!-- Top Text -->
+  <text font-family="Arial, Helvetica, sans-serif" font-weight="900" font-size="11.5" fill="#FFFFFF" letter-spacing="1.5">
+    <textPath href="#circlePathTop" startOffset="50%" text-anchor="middle">
+      GONNA INST. OF TECH. &amp; SCIENCES
+    </textPath>
+  </text>
+
+  <!-- Bottom Text -->
+  <text font-family="Arial, Helvetica, sans-serif" font-weight="800" font-size="10" fill="#FBBF24" letter-spacing="1.2">
+    <textPath href="#circlePathBottom" startOffset="50%" text-anchor="middle">
+      COLLEGE CODE: A8 • ESTD 2008
+    </textPath>
+  </text>
+
+  <!-- Inner Gold Boundary -->
+  <circle cx="120" cy="120" r="74" fill="#0B132B" stroke="url(#giitsGold)" stroke-width="2.5" />
+
+  <!-- Microchip & Communications Wave (ECE Theme) -->
+  <g transform="translate(120, 105)">
+    <!-- Circuit Waves -->
+    <path d="M -50 0 Q -25 -25 0 0 T 50 0" fill="none" stroke="#38BDF8" stroke-width="2.5" opacity="0.6" />
+    <path d="M -40 10 Q -20 30 0 10 T 40 10" fill="none" stroke="#60A5FA" stroke-width="2" opacity="0.4" />
+    
+    <!-- Central Chip -->
+    <rect x="-22" y="-22" width="44" height="44" rx="6" fill="#1E293B" stroke="url(#giitsGold)" stroke-width="2" />
+    <circle cx="0" cy="0" r="8" fill="#F59E0B" />
+    <circle cx="0" cy="0" r="14" fill="none" stroke="#38BDF8" stroke-width="1.5" stroke-dasharray="3 2" />
+
+    <!-- Chip Pins -->
+    <path d="M -15 -27 L -15 -22 M -5 -27 L -5 -22 M 5 -27 L 5 -22 M 15 -27 L 15 -22
+             M -15 22 L -15 27 M -5 22 L -5 27 M 5 22 L 5 27 M 15 22 L 15 27
+             M -27 -15 L -22 -15 M -27 -5 L -22 -5 M -27 5 L -22 5 M -27 15 L -22 15
+             M 22 -15 L 27 -15 M 22 -5 L 27 -5 M 22 5 L 27 5 M 22 15 L 27 15" stroke="url(#giitsGold)" stroke-width="2" stroke-linecap="round" />
+  </g>
+
+  <!-- Academic Open Book & Laurel -->
+  <g transform="translate(120, 158)">
+    <path d="M -28 -4 Q 0 -12 0 -6 Q 0 -12 28 -4 L 28 8 Q 0 0 0 4 Q 0 0 -28 8 Z" fill="url(#giitsGold)" />
+    <path d="M -28 -4 L 0 -6 L 28 -4" fill="none" stroke="#FFFFFF" stroke-width="1" />
+  </g>
+
+  <!-- Stars -->
+  <polygon points="40,120 42,125 47,125 43,128 45,133 40,130 35,133 37,128 33,125 38,125" fill="#F59E0B" />
+  <polygon points="200,120 202,125 207,125 203,128 205,133 200,130 195,133 197,128 193,125 198,125" fill="#F59E0B" />
+</svg>
