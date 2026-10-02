@@ -1,5 +1,5 @@
 /**
- * GIITS Institutional Attendance Portal Script with Animated Skeleton Loader
+ * GIITS Institutional Attendance Portal Script with Robust Skeleton Loading Flow
  */
 
 function calculatePercentage(present, total) {
@@ -181,12 +181,23 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
+  // Ensure Skeleton Loader is active while initializing connection
+  const skeleton = document.getElementById("skeletonLoaderCard");
+  const notFoundBox = document.getElementById("notFoundBox");
+  const cardContent = document.getElementById("studentCardContent");
+
+  if (skeleton) skeleton.classList.remove("hidden");
+  if (notFoundBox) notFoundBox.classList.add("hidden");
+  if (cardContent) cardContent.classList.add("hidden");
+
   if (window.AttendanceDB) {
     const student = await window.AttendanceDB.getStudentByRoll(rollParam);
     renderStudentView(student, rollParam);
 
     window.AttendanceDB.subscribeUpdates(rollParam, (updated) => {
-      renderStudentView(updated, rollParam);
+      if (updated !== undefined) {
+        renderStudentView(updated, rollParam);
+      }
     });
   } else {
     renderNotFoundState(rollParam);

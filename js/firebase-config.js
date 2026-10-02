@@ -1,5 +1,5 @@
 /**
- * Universal Firebase Firestore Database Engine (No Mock Data)
+ * Universal Firebase Firestore Database Engine with Robust Async Loading & Zero Mock Data
  * GONNA INSTITUTE OF INFORMATION TECHNOLOGY & SCIENCES
  * Department of Electronics and Communication Engineering
  */
@@ -32,14 +32,33 @@ function getDb() {
   return dbInstance;
 }
 
+// Wait for Firebase SDK Initialization helper
+async function waitForDb(maxWaitMs = 4000) {
+  const startTime = Date.now();
+  while (Date.now() - startTime < maxWaitMs) {
+    const db = getDb();
+    if (db) return db;
+    await new Promise(resolve => setTimeout(resolve, 100));
+  }
+  return getDb();
+}
+
 const STUDENTS_COLLECTION = "students";
 
 window.AttendanceDB = {
-  // Fetch student record by Roll Number (Returns null if record does not exist in DB)
+  // Fetch student record by Roll Number with connection retry
   getStudentByRoll: async function(rollNumber) {
     if (!rollNumber) return null;
     const roll = rollNumber.trim().toUpperCase();
-    const db = getDb();
+
+    // Check local storage cache first for instant response if available
+    let cached = null;
+    const stored = localStorage.getItem(`giits_roll_${roll}`);
+    if (stored) {
+      try { cached = JSON.parse(stored); } catch (e) {}
+    }
+
+    const db = await waitForDb(3500);
 
     if (db) {
       try {
@@ -51,25 +70,20 @@ window.AttendanceDB = {
           localStorage.setItem(`giits_roll_${roll}`, JSON.stringify(data));
           return data;
         } else {
-          return null; // Record does not exist in Firestore
+          return null; // Record explicitly confirmed as not existing in Firestore
         }
       } catch (err) {
-        console.warn("Firestore fetch notice, trying cached local storage:", err);
+        console.warn("Firestore fetch notice, using cached store:", err);
       }
     }
 
-    // Local Storage Fallback
-    const cached = localStorage.getItem(`giits_roll_${roll}`);
-    if (cached) {
-      try { return JSON.parse(cached); } catch (e) {}
-    }
-
-    return null;
+    // Return cached fallback if offline or network slow
+    return cached;
   },
 
   // Fetch all student records for Admin Portal
   getAllStudents: async function() {
-    const db = getDb();
+    const db = await waitForDb(3500);
     let result = {};
 
     if (db) {
@@ -121,7 +135,7 @@ window.AttendanceDB = {
     all[roll] = payload;
     localStorage.setItem("giits_all_records", JSON.stringify(all));
 
-    const db = getDb();
+    const db = await waitForDb(3500);
     if (db) {
       try {
         await db.collection(STUDENTS_COLLECTION).doc(roll).set(payload, { merge: true });
@@ -135,7 +149,7 @@ window.AttendanceDB = {
 
   // Save Bulk Monthly Attendance Batch
   saveMonthlyBatch: async function(monthName, recordsArray) {
-    const db = getDb();
+    const db = await waitForDb(3500);
     const all = await window.AttendanceDB.getAllStudents();
 
     for (const r of recordsArray) {
@@ -204,7 +218,7 @@ window.AttendanceDB = {
       localStorage.setItem("giits_all_records", JSON.stringify(all));
     }
 
-    const db = getDb();
+    const db = await waitForDb(3500);
     if (db) {
       try {
         await db.collection(STUDENTS_COLLECTION).doc(roll).delete();
@@ -214,11 +228,11 @@ window.AttendanceDB = {
     }
   },
 
-  // Real-time Firestore Listener
-  subscribeUpdates: function(rollNumber, callback) {
+  // Real-time Firestore Listener with async db wait
+  subscribeUpdates: async function(rollNumber, callback) {
     if (!rollNumber) return;
     const roll = rollNumber.trim().toUpperCase();
-    const db = getDb();
+    const db = await waitForDb(3500);
 
     if (db) {
       try {
@@ -230,6 +244,8 @@ window.AttendanceDB = {
           } else {
             callback(null);
           }
+        }, err => {
+          console.warn("Firestore snapshot error:", err);
         });
       } catch (e) {
         console.warn("Realtime listener notice:", e);
