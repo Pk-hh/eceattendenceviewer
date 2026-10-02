@@ -1,5 +1,5 @@
 /**
- * GIITS Institutional Attendance Portal Script - Deduplicated Ultra-Smooth Ring Engine
+ * GIITS Institutional Attendance Portal Script - Single Render Stream Engine
  */
 
 let currentStudentKey = null;
@@ -91,13 +91,13 @@ function renderNotFoundState(rollNumber) {
 
   if (skeleton) skeleton.classList.add("hidden");
   if (cardContent) cardContent.classList.add("hidden");
-  if (notFoundBox) {
+  if (notFoundBox && notFoundBox.classList.contains("hidden")) {
     notFoundBox.classList.remove("hidden");
     notFoundBox.classList.add("animate-fade-up");
-    const textEl = document.getElementById("notFoundRollText");
-    if (textEl) {
-      textEl.textContent = `No attendance record found for Roll Number "${rollNumber}" in database. Please check roll number or contact ECE Admin.`;
-    }
+  }
+  const textEl = document.getElementById("notFoundRollText");
+  if (textEl) {
+    textEl.textContent = `No attendance record found for Roll Number "${rollNumber}" in database. Please check roll number or contact ECE Admin.`;
   }
 }
 
@@ -107,10 +107,9 @@ function renderStudentView(data, rollNumber) {
     return;
   }
 
-  // Deduplicate renders to prevent double-loading ring animation glitch
+  // Deduplicate renders to prevent double-loading
   const dataKey = `${data.rollNumber}_${data.workingDays}_${data.presentDays}_${data.lastUpdated}_${JSON.stringify(data.monthlyHistory || {})}`;
   if (dataKey === currentStudentKey) {
-    // Data has not changed; skip duplicate animation
     return;
   }
   currentStudentKey = dataKey;
@@ -121,9 +120,13 @@ function renderStudentView(data, rollNumber) {
 
   if (skeleton) skeleton.classList.add("hidden");
   if (notFoundBox) notFoundBox.classList.add("hidden");
+
+  // Only trigger entrance animation ONCE when transitioning from hidden
   if (cardContent) {
-    cardContent.classList.remove("hidden");
-    cardContent.classList.add("animate-fade-up");
+    if (cardContent.classList.contains("hidden")) {
+      cardContent.classList.remove("hidden");
+      cardContent.classList.add("animate-fade-up");
+    }
   }
 
   const pct = calculatePercentage(data.presentDays, data.workingDays);
@@ -243,13 +246,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (cardContent) cardContent.classList.add("hidden");
 
   if (window.AttendanceDB) {
-    const student = await window.AttendanceDB.getStudentByRoll(rollParam);
-    renderStudentView(student, rollParam);
-
-    window.AttendanceDB.subscribeUpdates(rollParam, (updated) => {
-      if (updated !== undefined) {
-        renderStudentView(updated, rollParam);
-      }
+    // Single subscription stream handles initial load + live updates seamlessly
+    window.AttendanceDB.subscribeUpdates(rollParam, (student) => {
+      renderStudentView(student, rollParam);
     });
   } else {
     renderNotFoundState(rollParam);
